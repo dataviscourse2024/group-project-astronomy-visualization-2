@@ -6,23 +6,20 @@ document.addEventListener('DOMContentLoaded', function () {
     const dashboard1 = document.getElementById('dashboard1');
     const dashboard2 = document.getElementById('dashboard2');
 
-    let currentDashboard = 1; 
+    let currentDashboard = 1;
 
+    // Initially show dashboard1 and hide dashboard2
     dashboard1.style.display = 'block';
-    dashboard2.style.display = 'none'; // Initially hide dashboard 2
+    dashboard2.style.display = 'none';
 
-    
     switchButton.addEventListener('click', function () {
         if (currentDashboard === 1) {
             dashboard1.style.display = 'none';
             dashboard2.style.display = 'block';
             currentDashboard = 2;
 
-             // *** Add the background image setting here ***
-             dashboard2.style.backgroundImage = "url('https://www.solarsystemscope.com/images/background_stars_grid.jpg')"; 
-
-            
-            scatterPlot.setup('#dashboard2').then(() => { // Call setup when shown
+            // Setup the scatterplot in one of the divs
+            scatterPlot.setup('#scatterplot', './data/planets.json').then(() => {
                 scatterPlot.draw();
             });
         } else {
@@ -32,10 +29,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // Initialize solar system map in dashboard1
     solarSystemMap.setup('#dashboard1').then(() => {
         solarSystemMap.draw().then(() => {
             console.log('Solar system map drawn');
         });
     });
-
 });

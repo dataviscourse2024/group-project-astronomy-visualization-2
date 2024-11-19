@@ -1,117 +1,173 @@
-import { oldPlanetsData } from "../data/datasets.js";
 
 let svg, g;
-// Arbitrary
-let width = 800, height = 800;
-let systemCenter = { x: width / 2, y: height / 2 };
-let data;
-let planetRadiusScale, planetDistanceScale;
-
-const CHART_WIDTH = 500;
-const CHART_HEIGHT = 250;
-const MARGIN = { left: 50, bottom: 20, top: 20, right: 20 };
+const MARGIN = { left: 50, bottom: 50, top: 20, right: 50 };
 const ANIMATION_DURATION = 300;
+let data;
+let planetRadiusScale;
 
 /**
- * Create log scale for the radius of the planets
+ * Calculate the distance from the Sun
+ * @param {number} a - Semi-major axis (AU)
+ * @param {number} e - Orbital eccentricity
+ * @return {number} - Calculated distance (AU)
+ */
+const calculateDistanceFromSun = (a, e) => {
+    return a * (1 - e ** 2); // Approximation
+};
+
+/**
+ * Create a logarithmic scale for the planet's radius
  * @param {Array<Object>} data
  * @return {d3.ScaleLogarithmic<number, number>}
- * */
+ */
 const getPlanetRadiusScale = (data) => {
-    // Arbitrary
-    const maxRadiusInPixels = Math.min(width, height) / 30;
-    // Arbitrary
-    const minRadiusInPixels = maxRadiusInPixels / 10;
     return d3.scaleLog()
         .domain(d3.extent(data, d => d.radius))
-        .range([minRadiusInPixels, maxRadiusInPixels]);
-}
-
-/**
- * Create log scale for the distance of the planets from the Sun
- * @param {Array<Object>} data
- * @return {d3.ScaleLogarithmic<number, number>}
- * */
-const getPlanetDistanceScale = (data) => {
-    // Arbitrary
-    const planetsWithoutSun = data.filter(d => d.name !== 'Sun');
-    const maxDistanceInPixels = Math.min(width, height) / 2 * 0.9;
-    const minDistanceInPixels = 50;
-    return d3.scaleLog()
-        .domain(d3.extent(planetsWithoutSun, d => d.a_0))
-        .range([minDistanceInPixels, maxDistanceInPixels]);
-}
+        .range([2, 20]); // Scaled radius in pixels
+};
 
 /**
  * Initialize module values
- * @param {string} containerId
- * */
-export const setup = async (containerId) => {
-    // Load the data
-    data = await oldPlanetsData();
-    // exclude sun
-    data = data.filter(d => d.name !== 'Sun');
-    // Create the scales
+ * @param {string} containerId - The container element for the visualization
+ * @param {string} dataUrl - Path to the data file
+ */
+export const setup = async (containerId, dataUrl) => {
+    // Load the data using d3.json
+    data = await d3.json(dataUrl);
+    data = data.filter(d => d.name !== 'Sun') // Exclude the Sun
+        .map(d => ({
+            ...d,
+            calculatedDistance: calculateDistanceFromSun(d.a_0, d.e_0)
+        }));
+
+    // Create the radius scale
     planetRadiusScale = getPlanetRadiusScale(data);
-    planetDistanceScale = getPlanetDistanceScale(data);
+
+    //instead take size of window
+    // Get container dimensions
+    const container = d3.select(containerId);
+    const containerWidth = window.innerWidth
+    const containerHeight=window.innerHeight;
+
     // Create the SVG container
-    svg = d3.select(containerId)
-        .append('svg')
-        .attr('width', width)
-        .attr('height', height);
-    // Create a group for the solar system, this is the 'plot' object
-    g = svg.append('g');
-    // .attr('transform', `translate(${systemCenter.x}, ${systemCenter.y})`);
-}
+    svg = container.append('svg')
+        .attr('width', containerWidth)
+        .attr('height', containerHeight);
+
+    // Create a group for the scatterplot
+    g = svg.append('g')
+        .attr('transform', `translate(${MARGIN.left}, ${MARGIN.top})`);
+};
 
 /**
- * Draw the solar system map
- * */
+ * Draw the scatterplot visualization
+ */
 export const draw = () => {
     drawScatterPlot();
-}
+};
 
+/**
+ * Draw the scatterplot of planets
+ */
 const drawScatterPlot = () => {
-    let xScale = planetDistanceScale;
-    let yScale = planetRadiusScale;
+    // Get SVG dimensions
+    const containerWidth = svg.attr('width') - MARGIN.left - MARGIN.right;
+    const containerHeight = svg.attr('height') - MARGIN.top - MARGIN.bottom;
 
+    // Create scales for distance and radius
+    const xScale = d3.scaleLog()
+        .domain(d3.extent(data, d => d.calculatedDistance))
+        .range([0, containerWidth]);
+
+    const yScale = d3.scaleLog()
+        .domain(d3.extent(data, d => d.radius))
+        .range([containerHeight, 0]);
+
+    // Bind data to circles
     let circle = g
         .selectAll('circle')
         .data(data);
 
+    // Remove old circles
     circle.exit()
+        .transition()
+        .duration(ANIMATION_DURATION)
         .attr('r', 0)
         .remove();
 
-    const enterCircle = circle
-        .enter()
+    // Append new circles
+    const enterCircle = circle.enter()
         .append('circle')
+        .attr('cx', d => xScale(d.calculatedDistance))
+        .attr('cy', d => yScale(d.radius))
         .attr('r', 0)
-        .attr('cx', d => planetDistanceScale(d.a_0) + MARGIN.left)
-        .attr('cy', d => planetRadiusScale(d.radius) + MARGIN.top)
-        .attr('r', 5);
+        .attr('fill', 'blue');
 
+    // Merge and update circles
     circle = circle.merge(enterCircle)
-        .attr('cx', d => xScale(d.a_0) + MARGIN.left) // Use d.a_0 for distance
-        .attr('cy', d => yScale(d.radius) + MARGIN.top)
-        .attr('r', 5);
+        .transition()
+        .duration(ANIMATION_DURATION)
+        .attr('cx', d => xScale(d.calculatedDistance))
+        .attr('cy', d => yScale(d.radius))
+        .attr('r', d => planetRadiusScale(d.radius));
 
-        const xAxis = d3.axisBottom(xScale);
-        const yAxis = d3.axisLeft(yScale);
-    
-        g.selectAll(".x-axis").data([null]) 
-            .join("g")
-            .attr("class", "x-axis")
-            .attr("transform", `translate(0, ${height - MARGIN.bottom})`)
-            .call(xAxis)
-            .selectAll("text") // Select all axis labels
-            .style("fill", "white"); // Set the fill color to white
-    
-        g.selectAll(".y-axis").data([null]) 
-            .join("g")
-            .attr("class", "y-axis")
-            .attr("transform", `translate(${MARGIN.left}, 0)`)
-            .call(yAxis)
-            .selectAll("text") // Select all axis labels
-            .style("fill", "white"); // Set the fill color to white
-    }
+    // Add X-axis
+    const xAxis = d3.axisBottom(xScale).ticks(5, ".1s");
+    g.selectAll('.x-axis')
+        .data([null])
+        .join('g')
+        .attr('class', 'x-axis')
+        .attr('transform', `translate(0, ${containerHeight})`)
+        .call(xAxis)
+        .selectAll('text')
+        .style('fill', 'white');
+
+    // Append X-axis label
+    g.selectAll('.x-axis-label')
+        .data([null])
+        .join('text')
+        .attr('class', 'x-axis-label')
+        .attr('text-anchor', 'middle')
+        .attr('x', containerWidth / 2)
+        .attr('y', containerHeight + 40)
+        .text('Distance from Sun')
+        .style('fill', 'white');
+
+    // Add Y-axis
+    const yAxis = d3.axisLeft(yScale).ticks(5, ".1s");
+    g.selectAll('.y-axis')
+        .data([null])
+        .join('g')
+        .attr('class', 'y-axis')
+        .call(yAxis)
+        .selectAll('text')
+        .style('fill', 'white');
+
+    // Append Y-axis label
+    g.selectAll('.y-axis-label')
+        .data([null])
+        .join('text')
+        .attr('class', 'y-axis-label')
+        .attr('text-anchor', 'middle')
+        .attr('x', -containerHeight / 2)
+        .attr('y', -40)
+        .attr('transform', 'rotate(-90)')
+        .text('Radius')
+        .style('fill', 'white');
+
+    // Tooltip
+    const tooltip = d3.select("body").append("div")
+        .attr("class", "tooltip");
+
+    // Add event listeners for mouseover and mouseout
+    g.selectAll('circle')
+        .on('mouseover', function(event, d) {
+            tooltip.style('left', (event.pageX + 10) + 'px')
+                   .style('top', (event.pageY + 10) + 'px')
+                   .style('display', 'block')
+                   .html(`Name: ${d.name}<br>Radius: ${d.radius}<br>Distance from Sun: ${d.calculatedDistance} AU`);
+        })
+        .on('mouseout', function() {
+            tooltip.style('display', 'none');
+        });
+};

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Visualization - Homework 5 - LLM Magic</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+    integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+  <script src="https://d3js.org/d3.v7.js"></script>
+  <style>
+    .grid-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* Two equal-width columns */
+      grid-template-rows: 1fr 1fr; /* Two equal-height rows */
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .grid-item {
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Planet Data</h1>
+    <div>Name: Sarah Sami Khan; E-Mail: sarah.khan@utah.edu; UID: u1531711</div>
+  </header>
+
+  <div class="grid-container">
+    <div class="grid-item" id="scatterplot"></div>
+    <!-- <div class="grid-item" id="bubble-chart"></div>
+    <div class="grid-item" id="bar-chart"></div>
+    <div class="grid-item" id="dropdown-details">
+      <div class="view"></div>  -->
+
+    
+  </div>
+
+  
+  <script type="module">
+    import { setup, draw } from './js/scatterPlot.js';
+    setup('#scatterplot', './data/planets.json').then(() => {
+        draw();
+    });
+  </script>
+</body>
+
+</html>
