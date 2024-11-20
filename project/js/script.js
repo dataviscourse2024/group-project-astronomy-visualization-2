@@ -1,4 +1,5 @@
 import * as solarSystemMap from './vis/solar-system-map/solarSystemMap.js';
+import * as scatterPlot from './vis/scatter-hist-dashboard/scatterPlot.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const switchButton = document.getElementById('switchButton');
@@ -28,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Clear the previous visualization
             mapContainer.innerHTML = '';
-            solarSystemMap.setup('#dashboard2');
+            scatterPlot.setup('#dashboard-container2');
         } else {
             dashboard2.style.display = 'none';
             dashboard1.style.display = 'block';
