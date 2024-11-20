@@ -49,11 +49,83 @@
         </div>
 
         <!-- Dashboard 2 -->
-        <div class="dashboard" id="dashboard2">
-            <h1 class="dashboard-title">Dashboard 2</h1>
-            <p>This is the second dashboard.</p>
-            <div id="dashboard-container2"></div>
-        </div>
+        <div class="dashboard" id="dashboard2" style="display: none;">
+            <h3 class="dashboard-title">Mission Dataset Analysis</h3>
+            <div>
+                <p style="color:#f8f8f8; font-family: 'Orbitron', sans-serif; font-size: 1.2em;">
+                    The purpose of this dashboard is to show trends and patterns for our Mission Explorer Visualization.
+                </p>
+            </div>
+            <hr />
+            <div class="toolbox">
+                <span>
+                    <label for="data-type">Select Section</label>
+                    <select id="data-type">
+                        <option selected value="mission">Mission Data</option>
+                        <option value="body">Body Data</option>
+                    </select>
+                </span>
+                <span>
+                    <label for="dataset">Dataset:</label>
+                    <select id="dataset">
+                        <option value="missions_us">US Missions</option>
+                        <option selected value="missions_uae">UAE Missions</option>
+                        <option value="missions_india">India Missions</option>
+                        <option value="missions_esa">ESA Missions</option>
+                    </select>
+                </span>
+                <span>
+                    <label for="metric">Data Metric:</label>
+                    <select id="metric">
+                        <option value="success_rate">Mission Success Rate</option>
+                        <option value="funding">Funding</option>
+                        <option value="duration">Mission Duration</option>
+                        <option value="missions_launched">Missions Launched</option>
+                    </select>
+                </span>
+                <span>
+                    <label for="x-metric">X Metric:</label>
+                    <select id="x-metric">
+                        <option value="success_rate">Mission Success Rate</option>
+                        <option value="funding">Funding</option>
+                        <option value="duration">Mission Duration</option>
+                        <option value="missions_launched">Missions Launched</option>
+                    </select>
+                </span>
+                <span>
+                    <label for="y-metric">Y Metric:</label>
+                    <select id="y-metric">
+                        <option value="success_rate">Mission Success Rate</option>
+                        <option value="funding">Funding</option>
+                        <option value="duration">Mission Duration</option>
+                        <option value="missions_launched">Missions Launched</option>
+                    </select>
+                </span>
+            </div>
+            <br />
+        
+            <div class="row chart">
+                <div class="chart">
+                    <h2>Bar Charts</h2>
+                    <div id="Barchart-div"></div>
+                </div>
+                <div class="chart">
+                    <h2>Line Charts</h2>
+                    <div id="Linechart-div"></div>
+                </div>
+            </div>
+        
+            <div class="row chart">
+                <div class="chart">
+                    <h2>Area Charts</h2>
+                    <div id="Areachart-div"></div>
+                </div>
+                <div class="chart">
+                    <h2>Scatterplot</h2>
+                    <div id="Scatterplot-div"></div>
+                </div>
+            </div>
+        </div>    
 
         <!-- Switch Button -->
         <button class="switch-button" id="switchButton">Switch Dashboard</button>

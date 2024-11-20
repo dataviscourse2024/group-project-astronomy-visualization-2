@@ -133,3 +133,53 @@ body, html {
 .switch-button:hover {
     background-color: #0056b3;
 }
+
+/*Dashboard Styling */
+.chart-container {
+    width: 600px;
+    height: 400px;
+    margin: 20px auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.dashboard-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+}
+
+
+/* Bar Chart Styling */
+.bar-chart rect {
+    fill: rgb(60, 175, 255);
+}
+
+.bar-chart .hovered {
+    fill: #979696;
+}
+
+/* Line Chart Styling */
+.line-chart {
+    stroke: rgb(95, 88, 196);
+    stroke-width: 2;
+    fill: none;
+}
+
+/* Area Chart Styling */
+.area-chart {
+    fill: rgb(79, 175, 211);
+}
+
+/* Scatterplot Styling */
+.scatter-plot circle {
+    fill: rgb(79, 175, 211);
+}
+
+.scatter-plot .hovered {
+    fill: #979696;
+}
