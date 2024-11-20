@@ -1,38 +1,46 @@
-import * as solarSystemMap from './solarSystemMap.js';
-import * as scatterPlot from './scatterPlot.js';
+import * as solarSystemMap from './vis/solar-system-map/solarSystemMap.js';
+import * as scatterPlot from './vis/scatter-hist-dashboard/scatterPlot.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const switchButton = document.getElementById('switchButton');
     const dashboard1 = document.getElementById('dashboard1');
     const dashboard2 = document.getElementById('dashboard2');
+    const timeSlider = document.getElementById('slider');
+    const timeSliderText = document.getElementById('timeslider-text');
+    const mapContainer = document.getElementById('map-container');
 
     let currentDashboard = 1;
 
-    // Initially show dashboard1 and hide dashboard2
+    // Initial setup
     dashboard1.style.display = 'block';
     dashboard2.style.display = 'none';
 
+    // Time slider event
+    timeSlider.addEventListener('input', () => {
+        timeSliderText.textContent = timeSlider.value;
+    });
+
+    // Switch dashboards
     switchButton.addEventListener('click', function () {
         if (currentDashboard === 1) {
             dashboard1.style.display = 'none';
             dashboard2.style.display = 'block';
             currentDashboard = 2;
 
-            // Setup the scatterplot in one of the divs
-            scatterPlot.setup('#scatterplot', './data/planets.json').then(() => {
-                scatterPlot.draw();
-            });
+            // Clear the previous visualization
+            mapContainer.innerHTML = '';
+            scatterPlot.setup('#dashboard-container2');
         } else {
             dashboard2.style.display = 'none';
             dashboard1.style.display = 'block';
             currentDashboard = 1;
+
+            // Clear the previous visualization
+            mapContainer.innerHTML = '';
+            solarSystemMap.setup('#map-container');
         }
     });
 
-    // Initialize solar system map in dashboard1
-    solarSystemMap.setup('#dashboard1').then(() => {
-        solarSystemMap.draw().then(() => {
-            console.log('Solar system map drawn');
-        });
-    });
+    // Setup visualization for the first dashboard
+    solarSystemMap.setup('#map-container');
 });
