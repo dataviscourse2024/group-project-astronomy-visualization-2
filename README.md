@@ -1,6 +1,8 @@
 # Solar Explorer
 
-This repository contains the code and documentation for project "Solar Explorer". It is an interactive visualization tool that allows users to explore space missions and celestial bodies within our solar system.
+Interactive visualization tool that allows users to explore space missions and celestial bodies within our solar system!
+Available int this [Website](https://dataviscourse2024.github.io/group-project-astronomy-visualization-2/), Google Chrome recommnended ;).
+
 
 ## Team Members
 
