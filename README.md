@@ -6,12 +6,11 @@ Available int this [Website](https://dataviscourse2024.github.io/group-project-a
 
 ## Team Members
 
+- Simón González u1528314@utah.edu
+
 - Matthew Whitaker u1251812@utah.edu
 
 - Sarah Khan sarah.khan@utah.edu
-
-- Simón González u1528314@utah.edu
-
 
 
 ## Project Overview
